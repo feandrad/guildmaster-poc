@@ -1,0 +1,4 @@
+name = "guildmaster-poc"
+port = 3000
+authentication = "open_id"
+issuer = "https://accounts.google.com"

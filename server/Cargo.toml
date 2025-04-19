@@ -1,0 +1,14 @@
+[package]
+name = "guildmaster-server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tokio = { version = "1", features = ["full"] }
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+name = "guildmaster_server"
+path = "src/main.rs"
