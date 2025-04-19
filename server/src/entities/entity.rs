@@ -2,7 +2,7 @@ use crate::math::shape::Vector2;
 
 #[spacetimedb::table(name = entity, public)]
 #[derive(Debug, Clone)]
-pub struct Entity {
+pub struct MapEntity {
     // The `auto_inc` attribute indicates to SpacetimeDB that
     // this value should be determined by SpacetimeDB on insert.
     #[auto_inc]

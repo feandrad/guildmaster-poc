@@ -1,4 +1,7 @@
-use crate::ui::fonts::{FONT_REGULAR, FONT_ITALIC};
+use crate::network::connection::connect_to_db;
+use crate::ui::connection_dialog::{spawn_connection_dialog, ConnectionDialogBox, ConnectionDialogCancelButton, ConnectionState};
+use crate::ui::fonts::{FONT_ITALIC, FONT_REGULAR};
+use crate::ui::playing::spawn_playing_screen;
 
 use bevy::prelude::*;
 
@@ -289,19 +292,63 @@ pub fn character_color_update_connect_button(
     }
 }
 
+#[derive(Resource, Clone, PartialEq, Eq, Default)]
+pub enum AppScreen {
+    #[default]
+    Login,
+    CharacterCreation,
+    Connecting,
+    Playing,
+    Error(String),
+}
+
 pub fn connect_button_interaction(
     config: Res<CharacterConfig>,
     mut interaction_query: Query<&Interaction, (Changed<Interaction>, With<ConnectButtonTag>)>,
+    mut commands: Commands,
+    dialog_query: Query<Entity, With<ConnectionDialogBox>>,
+    mut app_screen: ResMut<AppScreen>,
 ) {
-    let name_valid = config.name.len() >= 4 && config.name.len() <= 32;
-    let color_valid = config.color.is_some();
-    if !(name_valid && color_valid) {
-        return; // Não permite clicar se inválido
+    for interaction in interaction_query.iter() {
+        if *interaction == Interaction::Pressed {
+            // Only spawn if not already present
+            if dialog_query.iter().next().is_none() {
+                spawn_connection_dialog(&mut commands, ConnectionState::Connecting);
+            }
+            // Call the connection logic so the reducer is triggered on the server
+            let _db_connection = connect_to_db();
+            *app_screen = AppScreen::Playing;
+        }
     }
-    for interaction in &mut interaction_query {
-        if let Interaction::Pressed = *interaction {
-            info!("Personagem selecionado: nome={}, cor={:?}", config.name, config.color);
-            // Aqui você pode enviar para o servidor!
+}
+
+pub fn transition_to_playing_screen(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+    app_screen: Res<AppScreen>,
+    character_query: Query<Entity, With<CharacterCreationScreen>>,
+    playing_query: Query<Entity, With<crate::ui::playing::PlayingScreen>>,
+) {
+    if *app_screen == AppScreen::Playing && playing_query.is_empty() {
+        // Remove character creation UI
+        for entity in character_query.iter() {
+            commands.entity(entity).despawn_recursive();
+        }
+        // Spawn playing screen
+        spawn_playing_screen(&mut commands);
+    }
+}
+
+pub fn connection_dialog_cancel_system(
+    mut commands: Commands,
+    mut interaction_query: Query<(&Interaction, Entity), (Changed<Interaction>, With<ConnectionDialogCancelButton>)>,
+    dialog_query: Query<Entity, With<ConnectionDialogBox>>,
+) {
+    for (interaction, _) in interaction_query.iter_mut() {
+        if *interaction == Interaction::Pressed {
+            for dialog_entity in dialog_query.iter() {
+                commands.entity(dialog_entity).despawn_recursive();
+            }
         }
     }
 }
@@ -326,12 +373,17 @@ fn keycode_to_char_case(key: KeyCode, shift: bool) -> Option<char> {
 
 // --- Plugin para a tela de criação de personagem ---
 pub struct CharacterScreenPlugin;
+
 impl Plugin for CharacterScreenPlugin {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, character_name_input)
-           .add_systems(Update, character_color_click)
-           .add_systems(Update, character_color_update_borders)
-           .add_systems(Update, connect_button_interaction)
-           .add_systems(Update, character_color_update_connect_button);
+        app
+            .init_resource::<AppScreen>()
+            .add_systems(Update, connect_button_interaction)
+            .add_systems(Update, connection_dialog_cancel_system)
+            .add_systems(Update, character_name_input)
+            .add_systems(Update, character_color_click)
+            .add_systems(Update, character_color_update_borders)
+            .add_systems(Update, character_color_update_connect_button)
+            .add_systems(Update, transition_to_playing_screen);
     }
 }

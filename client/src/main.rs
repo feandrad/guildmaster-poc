@@ -4,6 +4,9 @@ mod model {
     pub mod player;
 }
 mod entity;
+mod network;
+mod module_bindings;
+use module_bindings::*;
 
 use bevy::prelude::*;
 use entity::EntityPlugin;
@@ -28,12 +31,9 @@ fn advance_to_character_creation(
     config: Res<CharacterConfig>,
 ) {
     if !query.is_empty() && character_query.is_empty() {
-        // Remove a tela de boas-vindas
         for entity in query.iter() {
             commands.entity(entity).despawn_recursive();
         }
-        // Mostra a tela de criação de personagem
         spawn_character_creation_ui(&mut commands, &asset_server, &config);
     }
 }
-// Troque .add_plugin por .add_plugins para múltiplos plugins, conforme a API do Bevy 0.13
