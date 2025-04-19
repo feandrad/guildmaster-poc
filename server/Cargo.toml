@@ -1,14 +1,13 @@
 [package]
-name = "guildmaster-server"
+name = "spacetime-module"
 version = "0.1.0"
 edition = "2021"
 
-[dependencies]
-tokio = { version = "1", features = ["full"] }
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lib]
-path = "src/lib.rs"
+crate-type = ["cdylib"]
 
-[[bin]]
-name = "guildmaster_server"
-path = "src/main.rs"
+[dependencies]
+spacetimedb = "1.1.0"
+log = "0.4"

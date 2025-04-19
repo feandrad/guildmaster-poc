@@ -1,15 +1,21 @@
 mod ui;
+mod model {
+    pub mod position;
+    pub mod player;
+}
+mod entity;
 
 use bevy::prelude::*;
-use ui::login::{AuthState, spawn_login_ui, login_button_interaction, spawn_next_screen, NextScreenTag, LoginScreenPlugin};
-use ui::character::{CharacterConfig, spawn_character_creation_ui, character_name_input, character_color_click, character_color_update_borders, connect_button_interaction, CharacterCreationScreen, CharacterScreenPlugin};
+use entity::EntityPlugin;
+use ui::character::{spawn_character_creation_ui, CharacterConfig, CharacterCreationScreen, CharacterScreenPlugin};
+use ui::login::{AuthState, LoginScreenPlugin, NextScreenTag};
 
 fn main() {
     App::new()
         .insert_resource(AuthState::default())
         .insert_resource(CharacterConfig::default())
         .add_plugins(DefaultPlugins)
-        .add_plugins((LoginScreenPlugin, CharacterScreenPlugin))
+        .add_plugins((LoginScreenPlugin, CharacterScreenPlugin, EntityPlugin))
         .add_systems(Update, advance_to_character_creation)
         .run();
 }
