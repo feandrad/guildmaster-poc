@@ -1,6 +1,3 @@
-use spacetime::*;
-
-#[spacetime]
 pub enum GameEvent {
     Move { player_id: String, dx: i32, dy: i32 },
     SpawnPlayer { player_id: String, name: String, color: String, shape: String },
