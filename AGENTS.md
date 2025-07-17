@@ -1,12 +1,16 @@
 # AGENTS.md
 
-## Code Style
-- Formate Rust com `cargo fmt`
-- Use Clippy (`cargo clippy`) antes de confirmar
+## Build
+- Use `cargo build` para compilar.
+- Use `spacetime dev` para rodar localmente.
 
-## Testing
-- Execute `cargo test` após cada mudança
+## Estilo de código
+- Formate com `cargo fmt`
+- Rodar `cargo clippy` antes de confirmar mudanças
 
-## PR Instructions
-- Commit message: `[Codex] <descrição>`
-- Incluir seção "Testes realizados"
+## Testes
+- Testes podem ser adicionados com `cargo test` futuramente.
+
+## Observações
+- Código determinístico: sistemas SpacetimeDB devem evitar aleatoriedade.
+- Eventos precisam ser registrados em `lib.rs`
