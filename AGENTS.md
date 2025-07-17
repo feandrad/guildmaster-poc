@@ -3,10 +3,6 @@
 ## Diretório base
 - O código SpacetimeDB está em `./server`
 
-## Setup
-- Use o instalador oficial para o CLI: `curl -sSf https://install.spacetimedb.com | sh`
-- Após instalar, adicione ao PATH: `export PATH="/root/.local/bin:$PATH"`
-
 ## Build
 - Use `cd server && cargo build` para compilar
 - Use `cd server && spacetime start` para rodar localmente
