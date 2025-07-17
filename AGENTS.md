@@ -1,16 +1,20 @@
 # AGENTS.md
 
+## Diretório base
+- O código SpacetimeDB está em `./server`
+
 ## Build
-- Use `cargo build` para compilar.
-- Use `spacetime dev` para rodar localmente.
+- Use `cd server && cargo build` para compilar
+- Use `cd server && spacetime dev` para rodar localmente
 
 ## Estilo de código
-- Formate com `cargo fmt`
-- Rodar `cargo clippy` antes de confirmar mudanças
+- Rodar `cd server && cargo fmt` para formatar
+- Rodar `cd server && cargo clippy` antes de confirmar mudanças
 
 ## Testes
-- Testes podem ser adicionados com `cargo test` futuramente.
+- Futuramente, usar `cd server && cargo test`
 
 ## Observações
-- Código determinístico: sistemas SpacetimeDB devem evitar aleatoriedade.
-- Eventos precisam ser registrados em `lib.rs`
+- Eventos são definidos em `server/src/events.rs`
+- Sistemas determinísticos ficam em `server/src/systems.rs`
+- Registrar todos os eventos, componentes e sistemas em `server/src/lib.rs`
